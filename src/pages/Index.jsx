@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const fetchPosts = async () => {
   // Simulating API call
@@ -71,8 +72,20 @@ const Index = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6 text-center">My Cute Blog</h1>
-      <div className="mb-6 flex flex-wrap justify-center gap-2">
+      <div className="mb-12 text-center">
+        <Avatar className="w-32 h-32 mx-auto mb-4">
+          <AvatarImage src="https://github.com/shadcn.png" alt="Author" />
+          <AvatarFallback>CN</AvatarFallback>
+        </Avatar>
+        <h1 className="text-4xl font-bold mb-2">My Cute Blog</h1>
+        <p className="text-xl text-gray-600 mb-4">Welcome to my personal blog where I share my thoughts and experiences!</p>
+        <div className="flex justify-center space-x-4">
+          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-600">Twitter</a>
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-gray-900">GitHub</a>
+          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:text-blue-800">LinkedIn</a>
+        </div>
+      </div>
+      <div className="mb-8 flex flex-wrap justify-center gap-2">
         {categories.map((category) => (
           <Badge 
             key={category} 
