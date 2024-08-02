@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -20,11 +20,19 @@ const categories = ["全部", "vue优化", "Linux", "技术分享", "其它", "v
 
 const Index = () => {
   const [selectedPost, setSelectedPost] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState("全部");
 
   const { data: posts, isLoading, error } = useQuery({
     queryKey: ['posts'],
     queryFn: fetchPosts,
   });
+
+  const filteredPosts = useMemo(() => {
+    if (!posts) return [];
+    return selectedCategory === "全部"
+      ? posts
+      : posts.filter(post => post.category === selectedCategory);
+  }, [posts, selectedCategory]);
 
   if (isLoading) {
     return (
@@ -52,13 +60,18 @@ const Index = () => {
       <h1 className="text-3xl font-bold mb-6 text-center">My Cute Blog</h1>
       <div className="mb-6 flex flex-wrap justify-center gap-2">
         {categories.map((category) => (
-          <Badge key={category} variant={category === "全部" ? "default" : "secondary"} className="cursor-pointer">
+          <Badge 
+            key={category} 
+            variant={category === selectedCategory ? "default" : "secondary"} 
+            className="cursor-pointer"
+            onClick={() => setSelectedCategory(category)}
+          >
             {category}
           </Badge>
         ))}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {posts.map((post) => (
+        {filteredPosts.map((post) => (
           <Card 
             key={post.id} 
             className="cursor-pointer hover:shadow-lg transition-shadow overflow-hidden"
