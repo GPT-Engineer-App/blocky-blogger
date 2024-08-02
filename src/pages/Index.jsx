@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -7,12 +7,14 @@ import { Badge } from "@/components/ui/badge";
 const fetchPosts = async () => {
   // Simulating API call
   await new Promise(resolve => setTimeout(resolve, 1000));
+  const storedPosts = JSON.parse(localStorage.getItem('blogPosts')) || [];
   return [
     { id: 1, title: "First Blog Post", content: "This is the content of the first blog post.", image: "https://source.unsplash.com/random/800x600?cute=1", category: "vue优化" },
     { id: 2, title: "Second Blog Post", content: "This is the content of the second blog post.", image: "https://source.unsplash.com/random/800x600?cute=2", category: "Linux" },
     { id: 3, title: "Third Blog Post", content: "This is the content of the third blog post.", image: "https://source.unsplash.com/random/800x600?cute=3", category: "技术分享" },
     { id: 4, title: "Fourth Blog Post", content: "This is the content of the fourth blog post.", image: "https://source.unsplash.com/random/800x600?cute=4", category: "其它" },
     { id: 5, title: "Fifth Blog Post", content: "This is the content of the fifth blog post.", image: "https://source.unsplash.com/random/800x600?cute=5", category: "vue" },
+    ...storedPosts
   ];
 };
 
@@ -22,10 +24,22 @@ const Index = () => {
   const [selectedPost, setSelectedPost] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("全部");
 
-  const { data: posts, isLoading, error } = useQuery({
+  const { data: posts, isLoading, error, refetch } = useQuery({
     queryKey: ['posts'],
     queryFn: fetchPosts,
   });
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      refetch();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [refetch]);
 
   const filteredPosts = useMemo(() => {
     if (!posts) return [];

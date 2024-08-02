@@ -1,15 +1,20 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const categories = ["vue优化", "Linux", "技术分享", "其它", "vue"];
 
 const NewPost = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [category, setCategory] = useState('');
   const [createdPost, setCreatedPost] = useState(null);
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -22,6 +27,11 @@ const NewPost = () => {
     };
     setCreatedPost(newPost);
     console.log('New post:', newPost);
+    // Here you would typically send the post to your backend
+    // For now, we'll just simulate adding it to the posts list
+    setTimeout(() => {
+      navigate('/');
+    }, 2000);
   };
 
   return (
@@ -45,13 +55,16 @@ const NewPost = () => {
               </div>
               <div>
                 <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category</label>
-                <Input
-                  id="category"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  required
-                  className="mt-1"
-                />
+                <Select onValueChange={setCategory} required>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((cat) => (
+                      <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <label htmlFor="content" className="block text-sm font-medium text-gray-700">Content</label>
